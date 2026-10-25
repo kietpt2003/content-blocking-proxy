@@ -1,0 +1,46 @@
+version: 1
+enabled: true
+max_body_bytes: 2097152
+
+# Allow rules override both request blocking and response rewriting.
+allow_rules: []
+
+# Domain matching includes the domain itself and its subdomains.
+# path_regex matches the URL path + query string, not the entire URL.
+block_rules:
+  - id: doubleclick
+    domains: [doubleclick.net]
+  - id: google-ad-clicks
+    domains: [googleadservices.com]
+    path_regex: '^/pagead/'
+  - id: google-ad-endpoints
+    domains: [google.com, youtube.com]
+    path_regex: '^/(pagead/|api/stats/ads(?:[/?]|$))'
+  - id: facebook-tracking-pixel
+    domains: [facebook.com]
+    path_regex: '^/tr(?:[/?]|$)'
+
+# Best effort for recognized JSON responses. This is not a guarantee of ad-free
+# playback and does not touch media URLs, authentication or subscription state.
+json_rules:
+  - id: youtube-json-ad-fields
+    domains: [youtube.com, youtube-nocookie.com]
+    path_regex: '^/youtubei/v1/(player|next|browse)(?:[/?]|$)'
+    remove_keys: [adPlacements, playerAds, adSlots]
+    remove_items_with_keys:
+      - adSlotRenderer
+      - displayAdRenderer
+      - promotedSparklesWebRenderer
+      - inFeedAdLayoutRenderer
+
+# Cosmetic rules apply only to UTF-8 HTML without an enforced CSP.
+# They do not remove video ads or inspect the running browser DOM.
+html_rules:
+  - id: youtube-html-ad-elements
+    domains: [youtube.com]
+    path_regex: '^/(?:$|\?|watch(?:[/?]|$))'
+    hide_selectors:
+      - ytd-ad-slot-renderer
+      - ytd-display-ad-renderer
+      - ytd-promoted-sparkles-web-renderer
+

@@ -1,0 +1,10 @@
+.git
+.venv
+state
+.env
+tests
+__pycache__
+*.egg-info
+*.pem
+*.key
+

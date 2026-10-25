@@ -1,0 +1,12 @@
+# OPTIONAL reference only: not loaded by default.
+# Copy this entry into proxy.yaml -> json_rules ONLY after inspecting a response
+# from your own device and confirming that this exact boolean field is present.
+# Facebook often returns batched/anti-XSSI JSON, which this proxy passes unchanged.
+json_rules:
+  - id: facebook-explicit-sponsored-edges
+    domains: [facebook.com]
+    path_regex: '^/api/graphql/?(?:\?|$)'
+    remove_items_where:
+      - path: [node, is_sponsored]
+        equals: true
+
